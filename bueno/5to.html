@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Mini Game</title>
+  <style>
+
+    /* header */
+       header {
+  background-color:  rgb(203, 189, 189);
+  padding: 10px;
+  opacity: .95; 
+  font-family: Arial, sans-serif;
+  
+}
+
+nav {
+  display: flex;
+  justify-content: center;
+}
+
+nav ul {
+  display: flex;
+  justify-content: space-between;
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+  width: 100%;
+}
+
+nav ul li {
+  flex: 1;
+  text-align: center;
+}
+
+nav ul li a {
+  text-decoration: none;
+  color: #333;
+  transition: color 0.3s ease;
+}
+
+nav ul li a:hover {
+  color: white;
+}
+
+/* fin del header */
+
+    body {
+        background-image: url('/bueno/fondoacuarela.jpeg');
+  background-size: cover; /* Ajusta la imagen al tamaño del contenedor */
+  background-repeat: no-repeat; /* Evita que la imagen se repita */
+  background-position: center center; /* Centra la imagen en el contenedor */
+
+      font-family: Arial, sans-serif;
+      margin: 10px;
+      padding: 20px;
+    }
+    
+    h1 {
+      text-align: center;
+    }
+    
+    p {
+      text-align: justify;
+      line-height: 1.5;
+      position: relative;
+    margin-bottom: 20px; /* Agrega un doble renglón de separación */
+  
+    }
+
+    button {
+  display: inline-block;
+  padding: 10px 20px;
+  font-size: 16px;
+  font-weight: bold;
+  text-align: center;
+  text-decoration: none;
+  background-color: rgb(0, 81, 255);
+  color: #ffffff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+button:hover {
+  background-color: rgb(0, 162, 255);
+}
+   
+
+    input {
+        align-items: center;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 16px;
+  outline: none;
+  text-align: center;
+  color: rgb(0, 81, 255);
+  border: rgb(0, 81, 255);
+  margin-top: 50px;
+  margin-left: 135px;
+  margin-right: auto;
+  width: 50%;
+}
+
+input:focus {
+  border-color: rgb(0, 162, 255);
+  box-shadow: 0 0 5px rgb(0, 81, 255);
+}
+
+
+    .container {
+        
+      max-width: 600px;
+      margin: 70px auto;
+      background-color: #f4f4f4;
+      padding: 20px;
+      border-radius: 5px;
+      /* margin-top: 20px; */
+    }
+    
+    .highlight {
+      background-color: yellow;
+    }
+    
+    .button-container {
+      text-align: center;
+      margin-top: 20px;
+      
+    }
+    
+    #timer {
+      text-align: center;
+      font-size: 24px;
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+    
+    #result {
+      text-align: center;
+      font-size: 18px;
+      font-weight: bold;
+    
+    }
+
+    #story {
+  text-align: center;
+  margin-bottom: 20px;
+  font-size: 24px;
+
+    }
+    .iniciar-juego {
+        display: none;
+    }
+
+  
+  </style>
+</head>
+<body>
+    <header>
+        <nav>
+          <ul>
+            <li><a href="index.html">INICIO</a></li>
+            <li><a href="1ro.html">1RO PRIMARIA</a></li>
+            <li><a href="2do.html">2DO PRIMARIA</a></li>
+            <li><a href="3ro.html">3RO PRIMARIA</a></li>
+            <li><a href="4to.html">4TO PRIMARIA</a></li>
+            <li><a href="5to.html">5TO PRIMARIA</a></li>
+            <li><a href="6to.html">6TO PRIMARIA</a></li>
+          </ul>
+        </nav>
+      </header>
+  <div class="container">
+    <p id="story">
+        ¡Mucha suerte!
+        Haz click en el botón de inicio y ¡Diviértete!
+      <span class="car"></span>
+    </p>
+    <div id="timer">Tiempo: 60</div>
+    <audio id="sound" src="/bueno/timeout.wav"></audio>
+
+    <div class="button-container">
+        <button class="iniciar-juego" onclick="startGame()">Iniciar juego</button>
+        <button onclick="restartGame()">Iniciar juego</button>
+        <button onclick="pauseGame()">Pausar juego</button>
+      
+    </div>
+    <div>
+        <input type="text" id="lastWordInput" placeholder="Escribe la última palabra que leíste">
+    </div>
+    <div class="button-container">
+      <button  id="lastWordInput" onclick="checkLastWord()">Comprobar</button>
+    </div>
+    <div id="result"></div>
+    <div class="button-container">
+      <button onclick="nextLevel()">Siguiente</button>
+    </div>
+  </div>
+
+  <script>
+    const stories = [
+
+    "En un mundo lejano y lleno de magia, vivía Lucas, un joven intrépido y curioso. Un día, descubrió un antiguo pergamino que lo transportó a un lugar asombroso: el Reino Encantado. Acompañado por su leal compañero, un zorro parlante llamado Zippy, emprendió una travesía llena de desafíos. Juntos, enfrentaron criaturas mágicas, resolvieron enigmas y desentrañaron los secretos del reino. Al final del camino, hallaron el tesoro más valioso: la amistad y la valentía. Lucas regresó a casa convertido en un verdadero héroe, compartiendo su historia y animando a otros a seguir sus sueños. El Reino Encantado esperaba a los valientes corazones dispuestos a creer en la magia.", //115 palabras
+    "Había una vez en un pequeño pueblo, un grupo de amigos llamados Martina, Luis y Sofía. Juntos, descubrieron un mapa antiguo que los llevó a una isla misteriosa. En su aventura, se encontraron con animales exóticos y resolvieron acertijos emocionantes. Con ingenio y trabajo en equipo, lograron encontrar un tesoro escondido. El viaje de regreso fue lleno de emociones, pero finalmente llegaron a salvo. Martina, Luis y Sofía siempre recordarán esa aventura y la amistad que los unió para siempre. Aprendieron que la valentía y la colaboración pueden llevarlos a lugares increíbles.", // 118 palabras
+    "Había una vez en un pequeño pueblo llamado Villa Alegre, tres amigos inseparables: Lucas, Valentina y Mateo. Un día, mientras exploraban el bosque cercano, descubrieron una puerta mágica que los transportó a un mundo de fantasía. Allí se encontraron con criaturas mágicas, como hadas y unicornios, y vivieron emocionantes aventuras. Juntos, resolvieron enigmas y desafíos, demostrando su astucia y valentía. Al final de su travesía, encontraron un cofre lleno de tesoros mágicos y regresaron a casa con corazones llenos de alegría y recuerdos inolvidables. Lucas, Valentina y Mateo descubrieron que la amistad y la imaginación pueden llevarlos a lugares maravillosos donde todo es posible.", //120 palabras
+"Había una vez en un lejano reino un grupo de valientes exploradores conformado por cuatro amigos: Sofía, Juan, Marta y Alejandro. Juntos, emprendieron un viaje lleno de aventuras en busca de un antiguo tesoro perdido. Atravesaron densos bosques, cruzaron ríos tumultuosos y sortearon desafíos increíbles. En su travesía, hicieron amistad con seres mágicos y resolvieron enigmas milenarios. Con ingenio y valentía, lograron encontrar el tesoro y devolver la paz al reino. Regresaron a su hogar como héroes, con corazones llenos de gratitud y recuerdos inolvidables. Sofía, Juan, Marta y Alejandro demostraron que la unión, la determinación y la amistad son poderosas herramientas para alcanzar cualquier meta y vivir grandes aventuras.", //122 palabras
+"Había una vez en un pequeño pueblo llamado Villa Feliz, cinco amigos inseparables: Lucas, Ana, Martín, Carla y Sofía. Juntos, descubrieron un misterioso mapa que los conduciría a un tesoro escondido. Emocionados, se adentraron en un bosque encantado lleno de criaturas fantásticas. Superaron pruebas de valor y sabiduría, encontrando pistas en cada paso. Al final, bajo un antiguo roble, descubrieron un cofre lleno de monedas de oro y gemas brillantes. Compartieron su tesoro con el pueblo, construyendo un parque lleno de risas y juegos. La amistad y la aventura unieron sus corazones para siempre, dejando un legado de alegría en Villa Feliz.", //125 palabras
+
+    ];
+    let currentLevel = 0;
+    let timer;
+    let timeLeft = 60;
+    let gameStarted = false;
+    let currentIndex = 0;
+    let highlightInterval;
+
+    function startGame() {
+      if (!gameStarted) {
+        gameStarted = true;
+        timer = setInterval(updateTimer, 1000);
+        updateStory();
+        startHighlightInterval();
+      }
+    }
+
+    function pauseGame() {
+      clearInterval(timer);
+      clearInterval(highlightInterval);
+      gameStarted = false;
+    }
+
+    function restartGame() {
+      pauseGame();
+      currentIndex = 0;
+      timeLeft = 60;
+      document.getElementById("lastWordInput").value = "";
+      document.getElementById("result").textContent = "";
+      document.getElementById("timer").textContent = `Tiempo: ${timeLeft}`;
+      startGame();
+    }
+
+   
+
+    function updateTimer() {
+  const timerElement = document.getElementById("timer");
+  timeLeft--;
+  timerElement.textContent = `Tiempo: ${timeLeft}`;
+
+  if (timeLeft <= 0) {
+    clearInterval(timer);
+    showResult("¡Tiempo agotado!");
+
+    // Reproducir el sonido
+    const sound = document.getElementById("sound");
+    sound.play();
+
+    // Ocultar el texto después de 5 segundos
+    setTimeout(hideResult, 5000);
+  }
+}
+
+
+function hideResult() {
+  const resultElement = document.getElementById("result");
+  resultElement.textContent = "";
+}
+
+
+    function updateStory() {
+      const storyElement = document.getElementById("story");
+      storyElement.innerText = stories[currentLevel];
+    }
+
+    function nextLevel() {
+      currentLevel++;
+      if (currentLevel >= stories.length) {
+        currentLevel = 0;
+      }
+      updateStory();
+      stopTimer();
+      resetTimer();
+      gameStarted = false;
+    }
+
+    function stopTimer() {
+      clearInterval(timer);
+    }
+
+    function resetTimer() {
+      clearInterval(timer);
+      timeLeft = 60;
+      const timerElement = document.getElementById("timer");
+      timerElement.textContent = `Tiempo restante: ${timeLeft}`;
+    }
+
+    function showResult(message) {
+      const resultElement = document.getElementById("result");
+      resultElement.textContent = message;
+    }
+
+    function checkLastWord() {
+  const lastWordInput = document.getElementById("lastWordInput");
+  const userLastWord = normalizeText(lastWordInput.value.toLowerCase());
+  const story = normalizeText(stories[currentLevel].toLowerCase());
+  const lastWord = story.split(" ").pop();
+
+  if (userLastWord === lastWord) {
+    showResult("¡Lo Lograste! leíste todo el cuento en 60segs o menos ");
+  } else {
+    showResult("Ya casi lo logras, sigue intentando");
+  }
+  lastWordInput.value = "";
+  setTimeout(hideResult, 5000);
+}
+
+const lastWordInput = document.getElementById("lastWordInput");
+lastWordInput.addEventListener("keydown", function(event) {
+  if (event.key === "Enter") {
+    event.preventDefault();
+    checkLastWord();
+  }
+});
+
+function normalizeText(text) {
+  // Remueve los puntos, comas, signos de exclamación y acentos del texto
+  const normalizedText = text
+    .replace(/[.,!]/g, "")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "");
+  return normalizedText;
+}
+
+function hideResult() {
+  const resultElement = document.getElementById("result");
+  resultElement.textContent = "";
+}
+function startHighlightInterval() {
+      highlightInterval = setInterval(highlightWords, 1000);
+    }
+
+function highlightWords() {
+      if (gameStarted) {
+        const storyElement = document.getElementById("story");
+        const story = stories[currentLevel];
+        const words = story.split(" ");
+        const highlightedWords = [];
+        
+        if (currentIndex < words.length) {
+          for (let i = 0; i < words.length; i++) {
+            if (i === currentIndex) {
+              highlightedWords.push("<span class='highlight'>" + words[i] + "</span>");
+            } else {
+                highlightedWords.push("<span>" + words[i] + "</span>");
+            }
+          }
+          currentIndex++;
+        
+
+        storyElement.innerHTML = highlightedWords.join(" ");
+      }
+    }
+}
+
+
+   
+    
+  </script>
+</body>
+</html>
