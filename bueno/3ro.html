@@ -305,16 +305,21 @@ function hideResult() {
   const lastWord = story.split(" ").pop();
 
   if (userLastWord === lastWord) {
-    showResult("¡Lo Lograste! leíste todo el cuento en 60segs o menos ");
+    showResult("¡Lo Lograste! leíste todo el cuento en 60 segundos o menos");
   } else {
-    showResult("Ya casi lo logras, sigue intentando");
+    const remainingWords = getRemainingWords(userLastWord, story);
+    if (remainingWords > 0) {
+      showResult(`Te faltan ${remainingWords} palabras para llegar al final.`);
+    } else {
+      showResult("La palabra ingresada no se encuentra en el cuento. Inténtalo de nuevo.");
+    }
   }
   lastWordInput.value = "";
   setTimeout(hideResult, 5000);
 }
 
 const lastWordInput = document.getElementById("lastWordInput");
-lastWordInput.addEventListener("keydown", function(event) {
+lastWordInput.addEventListener("keydown", function (event) {
   if (event.key === "Enter") {
     event.preventDefault();
     checkLastWord();
@@ -328,6 +333,15 @@ function normalizeText(text) {
     .normalize("NFD")
     .replace(/[\u0300-\u036f]/g, "");
   return normalizedText;
+}
+
+function getRemainingWords(word, story) {
+  const words = story.split(" ");
+  const wordIndex = words.findIndex((w) => normalizeText(w) === word);
+  if (wordIndex !== -1) {
+    return words.length - wordIndex - 1;
+  }
+  return -1;
 }
 
 function hideResult() {
