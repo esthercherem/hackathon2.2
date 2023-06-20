@@ -154,6 +154,10 @@ input:focus {
         display: none;
     }
 
+    #resultBox {
+      color: green;
+    }
+
   
   </style>
 </head>
@@ -196,6 +200,10 @@ input:focus {
     <div class="button-container">
       <button onclick="nextLevel()">Siguiente</button>
     </div>
+    <div id="resultBox">
+      <p id="completedCount">Cuentos completados en 60 segundos: 0</p>
+    </div>
+    
   </div>
 
   <script>
@@ -299,6 +307,8 @@ function hideResult() {
       resultElement.textContent = message;
     }
 
+    let completedCount = 0;
+
     function checkLastWord() {
   const lastWordInput = document.getElementById("lastWordInput");
   const userLastWord = normalizeText(lastWordInput.value.toLowerCase());
@@ -307,6 +317,8 @@ function hideResult() {
 
   if (userLastWord === lastWord) {
     showResult("¡Lo Lograste! leíste todo el cuento en 60 segundos o menos");
+    completedCount++;
+    document.getElementById("completedCount").textContent = `Cuentos completados: ${completedCount}`;
   } else {
     const remainingWords = getRemainingWords(userLastWord, story);
     if (remainingWords > 0) {

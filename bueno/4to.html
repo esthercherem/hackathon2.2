@@ -154,6 +154,10 @@ input:focus {
         display: none;
     }
 
+    #resultBox {
+      color: purple;
+    }
+
   
   </style>
 </head>
@@ -196,6 +200,9 @@ input:focus {
     <div class="button-container">
       <button onclick="nextLevel()">Siguiente</button>
     </div>
+    <div id="resultBox">
+      <p id="completedCount">Cuentos completados en 60 segundos: 0</p>
+    </div>
   </div>
 
   <script>
@@ -220,13 +227,17 @@ input:focus {
         timer = setInterval(updateTimer, 1000);
         updateStory();
         startHighlightInterval();
+        currentIndex = 0; // Reinicia el índice de palabras al iniciar el juego
+  highlightInterval = setInterval(highlightWords, 1000); // Intervalo para ejecutar la función cada segundo
+}
       }
-    }
+    
 
     function pauseGame() {
       clearInterval(timer);
       clearInterval(highlightInterval);
       gameStarted = false;
+      clearInterval(highlightInterval); 
     }
 
     function restartGame() {
@@ -297,6 +308,8 @@ function hideResult() {
       const resultElement = document.getElementById("result");
       resultElement.textContent = message;
     }
+    let completedCount = 0;
+
     function checkLastWord() {
   const lastWordInput = document.getElementById("lastWordInput");
   const userLastWord = normalizeText(lastWordInput.value.toLowerCase());
@@ -305,6 +318,8 @@ function hideResult() {
 
   if (userLastWord === lastWord) {
     showResult("¡Lo Lograste! leíste todo el cuento en 60 segundos o menos");
+    completedCount++;
+    document.getElementById("completedCount").textContent = `Cuentos completados: ${completedCount}`;
   } else {
     const remainingWords = getRemainingWords(userLastWord, story);
     if (remainingWords > 0) {
@@ -342,14 +357,6 @@ function getRemainingWords(word, story) {
   }
   return -1;
 }
-function normalizeText(text) {
-  // Remueve los puntos, comas y acentos del texto
-  const normalizedText = text
-    .replace(/[.,]/g, "")
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "");
-  return normalizedText;
-}
 
 function hideResult() {
   const resultElement = document.getElementById("result");
@@ -359,28 +366,40 @@ function startHighlightInterval() {
       highlightInterval = setInterval(highlightWords, 1000);
     }
 
-function highlightWords() {
-      if (gameStarted) {
-        const storyElement = document.getElementById("story");
-        const story = stories[currentLevel];
-        const words = story.split(" ");
-        const highlightedWords = [];
-        
-        if (currentIndex < words.length) {
-          for (let i = 0; i < words.length; i++) {
-            if (i === currentIndex) {
-              highlightedWords.push("<span class='highlight'>" + words[i] + "</span>");
-            } else {
-                highlightedWords.push("<span>" + words[i] + "</span>");
-            }
-          }
-          currentIndex++;
-        
+    function highlightWords() {
+  if (gameStarted) {
+    const storyElement = document.getElementById("story");
+    const story = stories[currentLevel];
+    const words = story.split(" ");
+    const highlightedWords = [];
 
-        storyElement.innerHTML = highlightedWords.join(" ");
+    const totalDuration = 60; // Duración total en segundos
+
+    if (currentIndex < words.length) {
+      const wordDuration = totalDuration / words.length; // Duración individual de cada palabra
+      const elapsedDuration = wordDuration * currentIndex; // Duración transcurrida hasta la palabra actual
+
+      for (let i = 0; i < words.length; i++) {
+        if (i === currentIndex) {
+          highlightedWords.push("<span class='highlight'>" + words[i] + "</span>");
+        } else {
+          highlightedWords.push("<span>" + words[i] + "</span>");
+        }
       }
+
+      storyElement.innerHTML = highlightedWords.join(" ");
+
+      if (elapsedDuration >= totalDuration) {
+        clearInterval(highlightInterval); // Detiene el intervalo cuando se alcanza la duración total
+      }
+
+      currentIndex++;
     }
+  }
 }
+
+
+
 
 
    
